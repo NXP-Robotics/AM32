@@ -50,6 +50,9 @@ void save_flash_nolib(uint8_t *data, int length, uint32_t add){
 		__asm volatile ("nop");
 	}
 
+	//Update flash caches
+//	modifyReg32(&SYSCON->LPCAC_CTRL, 0, SYSCON_LPCAC_CTRL_DIS_LPCAC(1));
+
 	//Program data
 	status = FLASH_API->flash_program_page(&s_flashDriver, add, data, length);
 	if (status) {
@@ -64,14 +67,17 @@ void save_flash_nolib(uint8_t *data, int length, uint32_t add){
 		__asm volatile ("nop");
 	}
 
-	//Clear cache
-	modifyReg32(&SYSCON->LPCAC_CTRL, 0, SYSCON_LPCAC_CTRL_CLR_LPCAC(1));
+	//Update flash caches
+//	modifyReg32(&SYSCON->LPCAC_CTRL, 0, SYSCON_LPCAC_CTRL_DIS_LPCAC(1));
 
-	//Unclear cache
-	modifyReg32(&SYSCON->LPCAC_CTRL, SYSCON_LPCAC_CTRL_CLR_LPCAC(1), 0);
+//	//Clear cache
+//	modifyReg32(&SYSCON->LPCAC_CTRL, 0, SYSCON_LPCAC_CTRL_CLR_LPCAC(1));
+//
+//	//Unclear cache
+//	modifyReg32(&SYSCON->LPCAC_CTRL, SYSCON_LPCAC_CTRL_CLR_LPCAC(1), 0);
 
 	//Check if verify program found failed data
-	if ((failed_data_addr != 0) || (failed_data != 0)) {
+	if (failed_data_addr != 0) {
 		__asm volatile ("nop");
 	}
 
@@ -80,8 +86,8 @@ void save_flash_nolib(uint8_t *data, int length, uint32_t add){
 
 void read_flash_bin(uint8_t*  data , uint32_t add, int out_buff_len) {
 	//Read flash at given address
-	status = FLASH_API->flash_read(&s_flashDriver, add, data, out_buff_len);
-	if (status) {
-		__asm volatile ("nop");
-	}
+//	status = FLASH_API->flash_read(&s_flashDriver, add, data, out_buff_len);
+//	if (status) {
+//		__asm volatile ("nop");
+//	}
 }

@@ -53,7 +53,7 @@ void zcfoundroutine(void);
 //#define GIMBAL_MODE     // also
 // sinusoidal_startup needs to be on, maps input to sinusoidal angle.
 
-//#define USE_OVERRIDES
+#define USE_OVERRIDES
 
 //===========================================================================
 //=============================  Defaults =============================
@@ -378,14 +378,12 @@ int32_t doPidCalculations(struct fastPID* pidnow, int actual, int target)
 
 void loadEEpromSettings()
 {
-    read_flash_bin(eepromBuffer.buffer, eeprom_address, sizeof(eepromBuffer.buffer));
+//    read_flash_bin(eepromBuffer.buffer, eeprom_address, sizeof(eepromBuffer.buffer));
 
 #ifdef USE_OVERRIDES
-//	eepromBuffer.reserved_0 = 3;
-//    eepromBuffer.eeprom_version = 2; //2;
-//    eepromBuffer.reserved_1 = 2;
-//    eepromBuffer.version.major = 4;
-//    eepromBuffer.version.minor = 5;
+    eepromBuffer.eeprom_version = 2; //2;
+//    eepromBuffer.version.major = 1;
+//    eepromBuffer.version.minor = 23;
 
     eepromBuffer.comp_pwm = 1;
     eepromBuffer.variable_pwm = 0;

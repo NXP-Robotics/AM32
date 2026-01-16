@@ -13,7 +13,7 @@ ENTRY(ResetISR)
 MEMORY
 {
   /* Define each memory region */
-  BOOT_PROGRAM 	(rx)  : ORIGIN = 0x0, LENGTH = 0x4000
+  BOOT_PROGRAM  (rx)  : ORIGIN = 0x0, LENGTH = 0x4000
   FLASH_VECTAB  (rx)  : ORIGIN = ORIGIN(BOOT_PROGRAM) + LENGTH(BOOT_PROGRAM), LENGTH = 512
   FLASH_VERSION (rx)  : ORIGIN = ORIGIN(FLASH_VECTAB) + LENGTH(FLASH_VECTAB), LENGTH = 16
   PROGRAM_FLASH (rx)  : ORIGIN = ORIGIN(FLASH_VERSION) + LENGTH(FLASH_VERSION), LENGTH = 0x20000 - LENGTH(BOOT_PROGRAM) - LENGTH(FLASH_VECTAB) - LENGTH(FLASH_VERSION) - 32 - 0x2000 /* 128K bytes (alias Flash) */
@@ -21,7 +21,6 @@ MEMORY
   EEPROM        (rx)  : ORIGIN = ORIGIN(FILE_NAME) + LENGTH(FILE_NAME), LENGTH = 0x2000  /*0x1e000 - 0x20000*/
   SRAM 			(rwx) : ORIGIN = 0x20000000, LENGTH = 0x6000 /* 24K bytes (alias RAM) */  
   SRAMX0 		(rwx) : ORIGIN = 0x4000000, LENGTH = 0x2000 /* 8K bytes (alias RAM2) */  
-  SRAMX1 		(rwx) : ORIGIN = 0x4002000, LENGTH = 0x1000 /* 4K bytes (alias RAM3) */  
 }
 
   /* Define a symbol for the top of each memory region */
@@ -74,17 +73,12 @@ SECTIONS
         LONG(LOADADDR(.data_RAM2));
         LONG(    ADDR(.data_RAM2));
         LONG(  SIZEOF(.data_RAM2));
-        LONG(LOADADDR(.data_RAM3));
-        LONG(    ADDR(.data_RAM3));
-        LONG(  SIZEOF(.data_RAM3));
         __data_section_table_end = .;
         __bss_section_table = .;
         LONG(    ADDR(.bss));
         LONG(  SIZEOF(.bss));
         LONG(    ADDR(.bss_RAM2));
         LONG(  SIZEOF(.bss_RAM2));
-        LONG(    ADDR(.bss_RAM3));
-        LONG(  SIZEOF(.bss_RAM3));
         __bss_section_table_end = .;
         __section_table_end = . ;
         /* End of Global Section Table */
@@ -139,24 +133,6 @@ SECTIONS
         PROVIDE(__end_data_SRAMX0 = .) ;
      } > SRAMX0 AT>PROGRAM_FLASH
 
-    /* DATA section for SRAMX1 */
-
-    .data_RAM3 : ALIGN(4)
-    {
-        FILL(0xff)
-        PROVIDE(__start_data_RAM3 = .) ;
-        PROVIDE(__start_data_SRAMX1 = .) ;
-        *(.ramfunc.$RAM3)
-        *(.ramfunc.$SRAMX1)
-        *(.data.$RAM3)
-        *(.data.$SRAMX1)
-        *(.data.$RAM3.*)
-        *(.data.$SRAMX1.*)
-        . = ALIGN(4) ;
-        PROVIDE(__end_data_RAM3 = .) ;
-        PROVIDE(__end_data_SRAMX1 = .) ;
-     } > SRAMX1 AT>PROGRAM_FLASH
-
     /* MAIN DATA SECTION */
     .uninit_RESERVED (NOLOAD) : ALIGN(4)
     {
@@ -199,20 +175,6 @@ SECTIONS
        PROVIDE(__end_bss_SRAMX0 = .) ;
     } > SRAMX0 AT> SRAMX0
 
-    /* BSS section for SRAMX1 */
-    .bss_RAM3 (NOLOAD) : ALIGN(4)
-    {
-       PROVIDE(__start_bss_RAM3 = .) ;
-       PROVIDE(__start_bss_SRAMX1 = .) ;
-       *(.bss.$RAM3)
-       *(.bss.$SRAMX1)
-       *(.bss.$RAM3.*)
-       *(.bss.$SRAMX1.*)
-       . = ALIGN (. != 0 ? 4 : 1) ; /* avoid empty segment */
-       PROVIDE(__end_bss_RAM3 = .) ;
-       PROVIDE(__end_bss_SRAMX1 = .) ;
-    } > SRAMX1 AT> SRAMX1
-
     /* MAIN BSS SECTION */
     .bss (NOLOAD) : ALIGN(4)
     {
@@ -241,20 +203,6 @@ SECTIONS
        PROVIDE(__end_noinit_RAM2 = .) ;
        PROVIDE(__end_noinit_SRAMX0 = .) ;
     } > SRAMX0 AT> SRAMX0
-
-    /* NOINIT section for SRAMX1 */
-    .noinit_RAM3 (NOLOAD) : ALIGN(4)
-    {
-       PROVIDE(__start_noinit_RAM3 = .) ;
-       PROVIDE(__start_noinit_SRAMX1 = .) ;
-       *(.noinit.$RAM3)
-       *(.noinit.$SRAMX1)
-       *(.noinit.$RAM3.*)
-       *(.noinit.$SRAMX1.*)
-       . = ALIGN(4) ;
-       PROVIDE(__end_noinit_RAM3 = .) ;
-       PROVIDE(__end_noinit_SRAMX1 = .) ;
-    } > SRAMX1 AT> SRAMX1
 
     /* DEFAULT NOINIT SECTION */
     .noinit (NOLOAD): ALIGN(4)
